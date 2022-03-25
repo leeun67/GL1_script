@@ -1,8 +1,4 @@
-######Video source: https://ke.biowolf.cn
-######ÉúĞÅ×ÔÑ§Íø: https://www.biowolf.cn/
-######Î¢ĞÅ¹«ÖÚºÅ£ºbiowolf_cn
-######ºÏ×÷ÓÊÏä£ºbiowolf@foxmail.com
-######´ğÒÉÎ¢ĞÅ: 18520221056
+
 
 #install.packages("colorspace")
 #install.packages("stringi")
@@ -21,21 +17,21 @@ geneFC=rt$logFC
 gene=rt$entrezID
 names(geneFC)=gene
 
-#kegg¸»¼¯·ÖÎö
+#keggå¯Œé›†åˆ†æ
 kk <- enrichKEGG(gene = gene, organism = "hsa", pvalueCutoff = 0.05, qvalueCutoff = 0.05)
 write.table(kk,file="KEGG.txt",sep="\t",quote=F,row.names = F)
 
-#Öù×´Í¼
+#æŸ±çŠ¶å›¾
 tiff(file="barplot.tiff",width = 20,height = 20,units ="cm",compression="lzw",bg="white",res=300)
 barplot(kk, drop = TRUE, showCategory = 12)
 dev.off()
 
-#µãÍ¼
+#ç‚¹å›¾
 tiff(file="dotplot.tiff",width = 20,height = 20,units ="cm",compression="lzw",bg="white",res=300)
 dotplot(kk)
 dev.off()
 
-#Í¨Â·Í¼
+#é€šè·¯å›¾
 #library("pathview")
 #keggxls=read.table("KEGG.txt",sep="\t",header=T)
 #for(i in keggxls$ID){
@@ -44,7 +40,7 @@ dev.off()
 
 
 ######Video source: https://ke.biowolf.cn
-######ÉúĞÅ×ÔÑ§Íø: https://www.biowolf.cn/
-######Î¢ĞÅ¹«ÖÚºÅ£ºbiowolf_cn
-######ºÏ×÷ÓÊÏä£ºbiowolf@foxmail.com
-######´ğÒÉÎ¢ĞÅ: 18520221056
+######ç”Ÿä¿¡è‡ªå­¦ç½‘: https://www.biowolf.cn/
+######å¾®ä¿¡å…¬ä¼—å·ï¼šbiowolf_cn
+######åˆä½œé‚®ç®±ï¼šbiowolf@foxmail.com
+######ç­”ç–‘å¾®ä¿¡: 18520221056

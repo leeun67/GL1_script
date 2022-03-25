@@ -1,0 +1,92 @@
+#!/usr/bin/bash
+#SBATCH -J snp_fil     	             # 作业名为 test
+#SBATCH -o snp_filter               # 屏幕上的输出文件重定向到 test.out
+#SBATCH -p comp                   # 作业提交的分区
+#SBATCH --qos=normal               # 作业使用的 QoS 为 debug ,normal。debug优先级高，可使用资源少
+#SBATCH -N 1                      # 作业申请几个节点
+#SBATCH -c 12
+
+
+
+
+
+
+
+
+
+export PATH="/home/a2431559261/OLDISK/soft/gatk-4.1.9.0/:$PATH"
+
+
+alias "gatk=/home/a2431559261/OLDISK/soft/gatk-4.1.9.0/gatk"
+
+
+gemome=fl.fasta
+prefix=fl
+
+
+
+
+
+
+#过滤，需要建立矫正模型，这一步需要大样本测序以及准备的变异位点数据库
+
+
+mkdir -p select5
+
+cd select5
+
+
+# 1 得到SNP变异
+#提取SNP位点
+gatk SelectVariants -R ../ref/fl.fasta  \
+-O combine_SNP.raw.vcf.gz \
+--variant ../combine5/combine_variants.raw.vcf.gz \
+--select-type-to-include SNP
+
+#过滤
+gatk VariantFiltration \
+-R ../ref/fl.fasta \
+-O combine_SNP.filtered.vcf.gz  \
+--variant combine_SNP.raw.vcf.gz \
+--filter-name "snp_filter" \
+--filter-expression "QD<2.0 || FS>60.0 || SOR >3.0 ||MQ <40.0 || MQRankSum < -12.5 "
+
+
+
+# 2 得到INDEL 变异
+#提取INDEL位点
+gatk SelectVariants -R ../ref/fl.fasta \
+-O combine_INDEL.raw.vcf.gz \
+--variant ../combine5/combine_variants.raw.vcf.gz \
+--select-type-to-include INDEL
+
+#过滤
+gatk VariantFiltration \
+-R ../ref/fl.fasta \
+-O combine_INDEL.filtered.vcf.gz  \
+--variant combine_INDEL.raw.vcf.gz \
+--filter-name "indel_filter" \
+--filter-expression "QD<2.0 || FS>200.0 || SOR >10.0 ||MQ <40.0 || MQRankSum < -12.5 "
+
+
+gatk MergeVcfs \
+-I combine_SNP.filtered.vcf.gz \
+-I combine_INDEL.filtered.vcf.gz \
+-O fl.filter.snps.indels.genotype.vcf.gz
+
+## 4 提取PASS突变位点
+gatk SelectVariants  -R ../ref/fl.fasta \
+-V fl.filter.snps.indels.genotype.vcf.gz \
+-O fl.pass.snps.indels.genotype.vcf.gz \
+-select "vc.isNotFiltered()"
+
+gatk SelectVariants  -R ../ref/fl.fasta \
+-V combine_SNP.filtered.vcf.gz \
+-O fl.pass.snps.genotype.vcf.gz \
+-select "vc.isNotFiltered()"
+
+gatk SelectVariants  -R ../ref/fl.fasta \
+-V combine_INDEL.filtered.vcf.gz \
+-O fl.pass.indel.genotype.vcf.gz \
+-select "vc.isNotFiltered()"
+

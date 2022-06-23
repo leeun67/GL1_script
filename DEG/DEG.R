@@ -23,4 +23,4 @@ dev.off()
 
 #4 筛选差异表达基因
 DEG <- subset(res, padj < 0.05 & abs(log2FoldChange) > 1.5)
-write.csv(DEG,file= "gr_red_DEG_genes.cvs",row.names = T)
+write.csv(DEG,file= "DEG_genes.cvs",row.names = T)

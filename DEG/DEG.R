@@ -2,7 +2,7 @@ library(DESeq2)
 library(ggplot2)
 
 # 1文件读取
-mycounts<- read.csv("transcript_count_matrix.csv", row.names = 1, stringsAsFactors = F)
+mycounts<- read.csv("gene_count_matrix.csv", row.names = 1, stringsAsFactors = F)
 colData <- read.csv( "sample.csv",  stringsAsFactors = T)
 
 #2 Deseq运行
